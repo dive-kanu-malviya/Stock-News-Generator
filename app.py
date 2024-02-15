@@ -6,7 +6,7 @@ import time
 # Set the title of the app
 st.title('Stock Information Viewer')
 
-st.write("This application creates financial articles for all American stock based on price information, time of the day and trend of the stock as input by the financial analyst")
+st.write("This application creates financial articles for all US stocks based on price information, time of the day and trend of the stock as input by the financial analyst")
 
 # Input for stock symbol
 symbol = st.text_input('Enter Stock Symbol').upper()
