@@ -31,7 +31,7 @@ if symbol:
 
     # Function to fetch stock information
     def fetch_stock_info(symbol):
-        api_url = f"https://api.cloudquote.io/fcon/getQuote.json?symbol={symbol}&T={GETQUOTE_API_KEY}4"
+        api_url = f"https://api.cloudquote.io/fcon/getQuote.json?symbol={symbol}&T={GETQUOTE_API_KEY}"
         response = requests.get(api_url)
         if response.status_code == 200:
             return response.json().get('rows')[0]
