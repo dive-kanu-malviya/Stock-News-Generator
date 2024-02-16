@@ -189,6 +189,6 @@ if symbol:
                 else:
                     st.error('Failed to generate an article.')
         else:
-            st.error("Failed to generate an article. Market is closed")
+            st.error("Failed to generate an article. Market is closed.")
     else:
         st.error('Failed to fetch stock information. Please check the symbol and try again.')
