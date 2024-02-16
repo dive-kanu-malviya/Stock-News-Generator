@@ -170,13 +170,13 @@ if symbol:
         # Display stock information
         st.write('Name:', stock_info.get('Name', 'N/A'))
         st.write('Price:', round(stock_info.get('Price', 'N/A'), 3))
-        st.write('PrevClose:', round(stock_info.get('PrevClose', 'N/A'), 3))
+        st.write('Previous Close:', round(stock_info.get('PrevClose', 'N/A'), 3))
         st.write('Volume:', stock_info.get('Volume', 'N/A'))
-        st.write('ExchangeShortName:', stock_info.get('ExchangeShortName', 'N/A').upper())
-        st.write('ChangePercent:', round(stock_info.get('ChangePercent', 'N/A'), 3))
-        st.write('AfterHoursPrice:', round(stock_info.get('AfterHoursPrice', 'N/A'), 3))
+        st.write('Exchange Short Name:', stock_info.get('ExchangeShortName', 'N/A').upper())
+        st.write('Change Percent:', round(stock_info.get('ChangePercent', 'N/A'), 3))
+        st.write('After Hours Price:', round(stock_info.get('AfterHoursPrice', 'N/A'), 3))
         after_hours_trade_time_unix =  round(stock_info.get('AfterHoursTradeTime', 'N/A'), 3)
-        st.write('AfterHoursTradeTime:',after_hours_trade_time_unix)
+        
 
                 # Convert Unix timestamp to datetime in UTC
         after_hours_trade_time_utc = datetime.fromtimestamp(after_hours_trade_time_unix, tz=timezone.utc)
@@ -184,9 +184,11 @@ if symbol:
         # Convert UTC datetime to Eastern Standard Time (EST) timezone
         est_timezone = timezone(timedelta(hours=-5))  # EST is UTC-5
         after_hours_trade_time_est = after_hours_trade_time_utc.astimezone(est_timezone)
+        st.write('AfterHoursTradeTime:',after_hours_trade_time_est)
         
         # Check if the converted date is today's date
         today_date_est = datetime.now(est_timezone).date()
+        st.write('Current Time:',after_hours_trade_time_est)
         is_today = after_hours_trade_time_est.date() == today_date_est
 
         # Assign market_open based on the condition
