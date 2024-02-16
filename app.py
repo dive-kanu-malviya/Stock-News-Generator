@@ -125,7 +125,7 @@ def generate_article(symbol, stock_info, time_period):
             if change_percent < -20:
                 prompt = prompt + f"Article should sound like announcement for major stock fall"
             if change_percent > 20:
-                prompt = prompt + f"Article should sound like exciting announcement "
+                prompt = prompt + f"Article should sound like a massive bullish movement announcement "
 
         # st.text(f"PROMPT : {prompt}")
 
