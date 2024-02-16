@@ -4,7 +4,7 @@ import os
 import time
 
 # Set the title of the app
-st.title('Stock Information Viewer')
+st.title('Stock News Generator')
 
 st.write("This application creates financial articles for all US stocks based on price information, time of the day and trend of the stock as input by the financial analyst")
 
