@@ -74,8 +74,8 @@ def generate_article(symbol, stock_info, time_period):
                       f"price ${round(stock_info.get('AfterHoursPrice', 0), 3)}, previous session close p"
                       f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
                       f"{stock_info.get('Volume', 0)}")
-            change_percent = (round(stock_info.get('AfterHoursPrice', 0), 3) / round(stock_info.get('PrevClose', 0),
-                                                                                     3) - 1) * 100
+            change_percent = round((round(stock_info.get('AfterHoursPrice', 0), 3) / round(stock_info.get('PrevClose', 0),
+                                                                                     3) - 1) * 100,3)
 
             if change_percent > 0:
                 prompt = prompt + f"and change percent from market open till now is {change_percent}. "
@@ -88,8 +88,8 @@ def generate_article(symbol, stock_info, time_period):
                       f"price ${round(stock_info.get('AfterHoursPrice', 0), 3)}, previous session close p"
                       f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
                       f"{stock_info.get('Volume', 0)}")
-            change_percent = (round(stock_info.get('AfterHoursPrice', 0), 3) / round(stock_info.get('PrevClose', 0),
-                                                                                     3) - 1) * 100
+            change_percent = round((round(stock_info.get('AfterHoursPrice', 0), 3) / round(stock_info.get('PrevClose', 0),
+                                                                                     3) - 1) * 100,3)
 
             if change_percent < 0:
                 prompt = prompt + f"and change percent from market open till now is {change_percent}. "
