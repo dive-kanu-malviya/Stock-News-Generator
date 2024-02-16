@@ -180,11 +180,15 @@ if symbol:
                                    ('Mid-day', 'Pre-market-bullish', 'Pre-market-bearish', 'Post-market'))
 
         # Button to generate article
-        if st.button('Get Article'):
-            article = generate_article(symbol, stock_info, time_option)
-            if article:
-                st.text_area("Generated Article", article, height=300)
-            else:
-                st.error('Failed to generate an article.')
+
+        if stock_info.get('Open'):
+            if st.button('Get Article'):
+                article = generate_article(symbol, stock_info, time_option)
+                if article:
+                    st.text_area("Generated Article", article, height=300)
+                else:
+                    st.error('Failed to generate an article.')
+        else:
+            st.error("Failed to generate an article. Market is closed")
     else:
         st.error('Failed to fetch stock information. Please check the symbol and try again.')
