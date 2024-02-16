@@ -96,8 +96,8 @@ def generate_article(symbol, stock_info, time_period):
 
         elif time_period == "Post-market":
             # after market close
-            open_price = round(stock_info.get("Open"), 3)
-            open_present_prompt = " " if not open_price else f"opened today at ${open_price}"
+            open_price = round(stock_info.get("Open", 0), 3)
+            open_present_prompt = " " if not open_price == 0 else f"opened today at ${open_price}"
 
             change_percent = round(stock_info.get("ChangePercent", 0), 3)
             change_percent_prompt = ""
