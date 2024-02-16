@@ -181,7 +181,7 @@ if symbol:
 
         # Button to generate article
 
-        if stock_info.get('Open'):
+        if stock_info.get('Open') or  stock_info.get('ChangePercent',0)!=0:
             if st.button('Get Article'):
                 article = generate_article(symbol, stock_info, time_option)
                 if article:
