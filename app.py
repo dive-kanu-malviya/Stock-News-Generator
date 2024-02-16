@@ -15,6 +15,7 @@ import requests
 from openai import OpenAI
 try:
     OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
+    GETQUOTE_API_KEY=os.environ['GETQUOTE_API_KEY']
 except KeyError as e:
     st.error(f"Environment variable {e} not set. Please check your .env file or environment configuration.")
 
@@ -30,7 +31,7 @@ if symbol:
 
     # Function to fetch stock information
     def fetch_stock_info(symbol):
-        api_url = f"https://api.cloudquote.io/fcon/getQuote.json?symbol={symbol}&T=ek75s25rzz4"
+        api_url = f"https://api.cloudquote.io/fcon/getQuote.json?symbol={symbol}&T={GETQUOTE_API_KEY}4"
         response = requests.get(api_url)
         if response.status_code == 200:
             return response.json().get('rows')[0]
