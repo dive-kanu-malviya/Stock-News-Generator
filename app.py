@@ -3,6 +3,8 @@ import requests
 import os
 import time
 from openai import OpenAI
+from datetime import datetime, timezone, timedelta
+
 
 # Set the title of the app
 st.title('Stock News Generator')
