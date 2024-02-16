@@ -102,19 +102,25 @@ def generate_article(symbol, stock_info, time_period):
             change_percent = round(stock_info.get("ChangePercent", 0), 3)
             change_percent_prompt = ""
 
-            if change_percent == 0:
+
+            if change_percent == 0 and open_price != 0:
                 change_percent = (round(stock_info.get('Price', 0), 3 / open_price - 1)) * 100
 
             if change_percent > 0:
                 change_percent_prompt = "showed bullish movement "
             elif change_percent < 0:
                 change_percent_prompt = "showed bearish movement"
+            else:
+                after_market_price = round(stock_info.get("AfterHoursPrice", 0), 3)
+                after_market_prompt = " " if not open_price == 0 else (f"after market session ended at  "
+                                                                       f"${after_market_price}")
 
             prompt = (f"Write an informative article in 100 words about the stock XYZ {open_present_prompt} , "
-                      f"{change_percent_prompt} , closed at price ${round(stock_info.get('Price', 'N/A'), 3)}")
+                      f"{change_percent_prompt} , closed at price ${round(stock_info.get('Price', 'N/A'), 3)}, {after_market_prompt}")
 
-            prompt = prompt + f"and change in percent from market open till now is {change_percent}. "
-            if change_percent < -10:
+            if change_percent!=0:
+                prompt = prompt + f"and change in percent from market open till now is {change_percent}. "
+            if change_percent < -20:
                 prompt = prompt + f"Article should sound like announcement for major stock fall"
             if change_percent > 20:
                 prompt = prompt + f"Article should sound like exciting announcement "
