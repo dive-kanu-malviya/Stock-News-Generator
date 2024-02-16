@@ -175,7 +175,7 @@ if symbol:
         st.write('Previous Close:', round(stock_info.get('PrevClose', 'N/A'), 3))
         st.write('Volume:', stock_info.get('Volume', 'N/A'))
         st.write('Exchange Short Name:', stock_info.get('ExchangeShortName', 'N/A').upper())
-        st.write('Change Percent:', round(stock_info.get('ChangePercent', 'N/A'), 3))
+        # st.write('Change Percent:', round(stock_info.get('ChangePercent', 'N/A'), 3))
         st.write('After Hours Price:', round(stock_info.get('AfterHoursPrice', 'N/A'), 3))
         after_hours_trade_time_unix =  round(stock_info.get('AfterHoursTradeTime', 'N/A'), 3)
         
