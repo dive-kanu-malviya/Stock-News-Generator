@@ -22,12 +22,36 @@ try:
     OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
     GETQUOTE_API_KEY = os.environ['GETQUOTE_API_KEY']
 
+
+
+
 except KeyError as e:
     st.error(f"Environment variable {e} not set. Please check your .env file or environment configuration.")
     st.stop()
 
 # Initialize OpenAI client
 client = OpenAI(api_key=OPENAI_API_KEY)
+
+# Function to determine the current time period in EST
+def get_time_period():
+    est = timezone(timedelta(hours=-5))  # EST timezone
+    now_est = datetime.now(est)
+    pre_market_start = now_est.replace(hour=4, minute=15, second=0, microsecond=0)
+    market_start = now_est.replace(hour=9, minute=15, second=0, microsecond=0)
+    market_end = now_est.replace(hour=16, minute=15, second=0, microsecond=0)
+    post_market_end = now_est.replace(hour=20, minute=0, second=0, microsecond=0)
+
+
+    if market_start <= now_est <= market_end:
+        return "Mid-day"
+    elif now_est < market_start and now_est > pre_market_start:
+        return "Pre-market"
+    elif market_end < now_est <= post_market_end:
+        return "Post-market"
+    else:
+        return "Market Closed"
+
+
 
 
 # Function to fetch stock information
@@ -43,7 +67,7 @@ def fetch_stock_info(symbol):
 
 
 # Function to generate article
-def generate_article(symbol, stock_info, time_period):
+def generate_article(symbol, stock_info,time_period):
     """
         Generate a financial article based on stock information and time period.
 
@@ -55,46 +79,40 @@ def generate_article(symbol, stock_info, time_period):
         Returns:
         A string containing the generated article.
     """
-    article = ""
-    change_percent = round(stock_info.get('ChangePercent', 0), 3)
+
     try:
-        # Construct the prompt from stock information
+        article = ""
+        change_percent = round(stock_info.get('ChangePercent', 0), 3)
+        prompt = ""
+        after_market_prompt =""
+            # Construct the prompt from stock information
         if time_period == "Mid-day":
             open_price = round(stock_info.get("Open"), 3)
             open_present_prompt = " " if not open_price else f"opened today at ${open_price}"
             prompt = (f"Write an engaging informative article in 100 words about the stock XYZ {open_present_prompt} , "
-                      f"currently trading at ${round(stock_info.get('Price', 0), 3)}, previous session close p"
-                      f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
-                      f"{stock_info.get('Volume', 0)}")
+                        f"currently trading at ${round(stock_info.get('Price', 0), 3)}, previous session close p"
+                        f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
+                        f"{stock_info.get('Volume', 0)}")
             if change_percent > 0:
                 prompt = prompt + f"and change percent from market open till now is {change_percent}"
 
-        elif time_period == "Pre-market-bullish":
-            prompt = (f"Write an engaging informative article in 100 words about the stock XYZ that opened at bullish "
-                      f"price ${round(stock_info.get('AfterHoursPrice', 0), 3)}, previous session close p"
-                      f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
-                      f"{stock_info.get('Volume', 0)}")
+        elif time_period == "Pre-market":
+            
             change_percent = round((round(stock_info.get('AfterHoursPrice', 0), 3) / round(stock_info.get('PrevClose', 0),
-                                                                                     3) - 1) * 100,3)
+                                                                                        3) - 1) * 100,3)
+            trend = "bullish" if change_percent > 0 else "bearish"
 
-            if change_percent > 0:
-                prompt = prompt + f"and change percent from market open till now is {change_percent}. "
+            prompt = (f"Write an engaging informative article in 100 words about the stock XYZ that is trading in {trend} trend at in pre market session "
+                        f"price ${round(stock_info.get('AfterHoursPrice', 0), 3)}, previous session close p"
+                        f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
+                        f"{stock_info.get('Volume', 0)}")
+            
+            prompt = prompt + f"and change percent from market open till now is {change_percent}. "
             if change_percent > 20:
                 prompt = prompt + f"Article should sound like exciting announcement "
+            elif change_percent > 0:
+                prompt = prompt + f"Article should sound like a announcement"
 
-
-        elif time_period == "Pre-market-bearish":
-            prompt = (f"Write an engaging informative article in 100 words about the stock XYZ that opened at bearish "
-                      f"price ${round(stock_info.get('AfterHoursPrice', 0), 3)}, previous session close p"
-                      f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
-                      f"{stock_info.get('Volume', 0)}")
-            change_percent = round((round(stock_info.get('AfterHoursPrice', 0), 3) / round(stock_info.get('PrevClose', 0),
-                                                                                     3) - 1) * 100,3)
-
-            if change_percent < 0:
-                prompt = prompt + f"and change percent from market open till now is {change_percent}. "
-            if change_percent < -20:
-                prompt = prompt + f"Article should sound like announcement for major stock fall"
 
         elif time_period == "Post-market":
             # after market close
@@ -115,17 +133,20 @@ def generate_article(symbol, stock_info, time_period):
             else:
                 after_market_price = round(stock_info.get("AfterHoursPrice", 0), 3)
                 after_market_prompt = " " if not open_price == 0 else (f"after market session ended at  "
-                                                                       f"${after_market_price}")
+                                                                        f"${after_market_price}")
 
             prompt = (f"Write an informative article in 100 words about the stock XYZ {open_present_prompt} , "
-                      f"{change_percent_prompt} , closed at price ${round(stock_info.get('Price', 'N/A'), 3)}, {after_market_prompt}")
+                        f"{change_percent_prompt} , closed at price ${round(stock_info.get('Price', 'N/A'), 3)}, {after_market_prompt}")
 
             if change_percent!=0:
                 prompt = prompt + f"and change in percent from market open till now is {change_percent}. "
-            if change_percent < -20:
-                prompt = prompt + f"Article should sound like announcement for major stock fall"
-            if change_percent > 20:
-                prompt = prompt + f"Article should sound like a massive bullish movement announcement "
+                if change_percent < -20:
+                    prompt = prompt + f"Article should sound like announcement for major stock fall"
+                elif change_percent > 20:
+                    prompt = prompt + f"Article should sound like a massive price rise  "
+
+        elif time_period =="Market Closed":
+            return "No article generated"
 
         # st.text(f"PROMPT : {prompt}")
 
@@ -136,8 +157,8 @@ def generate_article(symbol, stock_info, time_period):
         stream = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "system", "content": "You are a financial analyst"},
-                      {"role": "user", "content": prompt},
-                      {"role": "user", "content": "Do not mention any trading symbol information"}],
+                    {"role": "user", "content": prompt}
+                    ],
 
             stream=True,
         )
@@ -155,6 +176,7 @@ def generate_article(symbol, stock_info, time_period):
         article = article.replace('stock xyz', f' {company_name}({exchange}:{symbol}) ')
 
         article = article.replace('The stock of company, XYZ', f' {company_name}({exchange}:{symbol}) ')
+        article = article.replace('The company, XYZ', f' {company_name}({exchange}:{symbol}) ')
         article = article.replace('The company, XYZ', f' {company_name}({exchange}:{symbol}) ')
 
         return article
@@ -190,21 +212,21 @@ if symbol:
         
         # Check if the converted date is today's date
         today_date_est = datetime.now(est_timezone).date()
-        st.write('Current Time:',after_hours_trade_time_est)
+        st.write('Current Time:',today_date_est)
         is_today = after_hours_trade_time_est.date() == today_date_est
 
         # Assign market_open based on the condition
         market_open = True if is_today else False
 
-        # Time selection for article generation
-        time_option = st.selectbox("Select Time and Trend",
-                                   ('Mid-day', 'Pre-market-bullish', 'Pre-market-bearish', 'Post-market'))
-
         # Button to generate article
 
         if stock_info.get('Open') or  stock_info.get('ChangePercent',0)!=0 or market_open:
             if st.button('Get Article'):
-                article = generate_article(symbol, stock_info, time_option)
+                time_period = get_time_period()
+                st.write(f"Current time period in EST: {time_period}")
+
+                article = generate_article(symbol, stock_info,time_period)
+                #add header
                 article = f"New York, {today_date_est} : ({stock_info.get('ExchangeShortName', 'N/A').upper()}:{symbol.upper()})\n" + article
                 if article:
                     st.text_area("Generated Article", article, height=300)
