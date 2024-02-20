@@ -89,7 +89,7 @@ def generate_article(symbol, stock_info,time_period):
         if time_period == "Mid-day":
             open_price = round(stock_info.get("Open"), 3)
             open_present_prompt = " " if not open_price else f"opened today at ${open_price}"
-            prompt = (f"Write an engaging informative article in 100 words about the stock XYZ {open_present_prompt} , "
+            prompt = (f"Write an  informative article doing technical analysis in 100 words about the stock XYZ {open_present_prompt} , "
                         f"currently trading at ${round(stock_info.get('Price', 0), 3)}, previous session close p"
                         f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
                         f"{stock_info.get('Volume', 0)}")
@@ -102,16 +102,15 @@ def generate_article(symbol, stock_info,time_period):
                                                                                         3) - 1) * 100,3)
             trend = "bullish" if change_percent > 0 else "bearish"
 
-            prompt = (f"Write an engaging informative article in 100 words about the stock XYZ that is trading in {trend} trend at in pre market session "
+            prompt = (f"Write an  informative article doing technical analysis in 100 words about the stock XYZ that is trading in {trend} trend at in pre market session "
                         f"price ${round(stock_info.get('AfterHoursPrice', 0), 3)}, previous session close p"
                         f"rice was ${round(stock_info.get('PrevClose', 0), 3)}, current volume is "
                         f"{stock_info.get('Volume', 0)}")
             
             prompt = prompt + f"and change percent from market open till now is {change_percent}. "
             if change_percent > 20:
-                prompt = prompt + f"Article should sound like exciting announcement "
-            elif change_percent > 0:
-                prompt = prompt + f"Article should sound like a announcement"
+                prompt = prompt + f"Article should sound like a announcement of massive price movement "
+            
 
 
         elif time_period == "Post-market":
