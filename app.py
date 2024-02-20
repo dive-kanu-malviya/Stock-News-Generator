@@ -136,7 +136,8 @@ def generate_article(symbol, stock_info,time_period):
                                                                         f"${after_market_price}")
 
             prompt = (f"Write an informative article in 100 words about the stock XYZ {open_present_prompt} , "
-                        f"{change_percent_prompt} , closed at price ${round(stock_info.get('Price', 'N/A'), 3)}, {after_market_prompt}")
+                        f"{change_percent_prompt} , closed at price ${round(stock_info.get('Price', 'N/A'), 3)}, {after_market_prompt}, current volume is "
+                        f"{stock_info.get('Volume', 0)}")
 
             if change_percent!=0:
                 prompt = prompt + f"and change in percent from market open till now is {change_percent}. "
